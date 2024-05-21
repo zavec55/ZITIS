@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<title>Joga Slike</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script><!-- Dodajanje TensorFlow.js in PoseNet v HTML:-->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+<style>
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
+    #video, #canvas, #poseImage { border: 1px solid black; }
+    .container { display: flex; justify-content: center; align-items: center; margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+    <img id="poseImage" src="slike/jogapoze/poza3.jpg" width="640" height="480" alt="poza1">
+</div>
+<button id="snap" onclick="takePicture();" style="display:block;">Slikaj</button>
+<button onclick="startVoiceCommands();">Začni z glasovnimi ukazi</button>
+
+<script>
+    function setupCamera() {
+        const video = document.getElementById('video');
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function(error) {
+                    console.error("Napaka pri dostopu do kamere:", error);
+                    alert('Napaka pri dostopu do kamere: ' + error.message);
+                });
+        } else {
+            alert('Vaš brskalnik ne podpira dostopa do kamere!');
+        }
+    }
+
+    function takePicture() {
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const video = document.getElementById('video');
+        context.drawImage(video, 0, 0, 640, 480);
+        canvas.style.display = 'block'; // Show the picture
+        console.log('KLIC.');
+        checkPose();  // Kliči funkcijo za preverjanje poze takoj po tem, ko je slika posneta
+    }
+
+    window.addEventListener('load', setupCamera);
+</script>
+
+<script>
+    function speak(text) {
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.lang = 'sl-SI';
+        window.speechSynthesis.speak(speech);
+    }
+
+    if (annyang) {
+        var commands = {
+            'foto': function() {
+                document.getElementById('snap').click();
+                speak('slikam.');
+                takePicture();  // Neposredno kličemo funkcijo za slikanje
+            },
+            'preveri': function() {
+                speak('preverjam pozo.');
+                takePicture();  // Neposredno kličemo funkcijo za slikanje
+            },
+            'prikaži uporabnike': function() {
+                document.getElementById('viewUsersButton').click();
+                speak('Prikazujem uporabnike.');
+            },
+            'info': function() {
+                speak('Spletna stran prikazuje osnovne vaje za jogo in navodila kako se lotiti prvih vaj. Upamo da boste našli koristne informacije.');
+            },
+            'video': function() {
+                window.location.href = '/videi.html';
+                speak('prikazujem video.');
+            },
+            'domov': function() {
+                window.location.href = 'http://localhost:3000/test';
+                speak('Odjavljam.');
+            }
+        };
+        annyang.addCommands(commands);
+        annyang.setLanguage('sl');
+    }
+
+    function startVoiceCommands() {
+        if (annyang) {
+            annyang.start();
+            speak('Glasovni ukazi so aktivirani.');
+        } else {
+            alert('Glasovni ukazi niso podprti ali omogočeni v vašem brskalniku.');
+        }
+    }
+//za preverjanje poze uporabnika na podlagi slikane slike
+const threshold = 30200;  // Nastavitev praga
+
+let currentPoseIndex = 0;
+const poses = ["jogapoze/poza1.jpg", "jogapoze/poza2.jpg", "jogapoze/poza3.jpg", "jogapoze/poza2.jpg", "jogapoze/poza3.jpg"];
+
+function nextPose() {
+    if (currentPoseIndex < poses.length - 1) {
+        currentPoseIndex++;
+        document.getElementById('poseImage').src = poses[currentPoseIndex];
+    } else {
+        speak('Čestitamo, uspešno ste opravili začetni tečaj izvedbe joge. To je bila zadnja poza.');
+    }
+}
+async function checkPose() {
+    const net = await posenet.load();
+    const webcamImage = document.getElementById('canvas');
+    console.log('Model naložen.');
+    const poseImage = document.getElementById('poseImage');
+    const webcamPose = await net.estimateSinglePose(webcamImage, { flipHorizontal: false });
+    const examplePose = await net.estimateSinglePose(poseImage, { flipHorizontal: false });
+
+    const distance = calculateDistance(webcamPose.keypoints, examplePose.keypoints);
+    if (distance < threshold) {
+        console.log('Poza pravilna.');//+distance);
+        alert('Poza je pravilna! ');// +distance);
+        speak('Poza je pravilna!. Čestitamo nadaljujte z naslednjo pozo.');
+    } else {
+        console.log('Poza ni pravilna.');
+        alert('Poza ni pravilna, poskusite znova. ');//+distance);
+        speak('Poza ni pravilna, poskusite znova.');
+    }
+}
+
+function calculateDistance(kp1, kp2) {
+    let sumDistance = 0;
+    kp1.forEach((keypoint, index) => {
+        const xDiff = keypoint.position.x - kp2[index].position.x;
+        const yDiff = keypoint.position.y - kp2[index].position.y;
+        sumDistance += Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+    });
+    return sumDistance;
+}
+</script>
+</body>
+</html>

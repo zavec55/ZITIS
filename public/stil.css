@@ -1,0 +1,129 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+}
+
+h1, h2 {
+    color: #6a329f;
+}
+
+form, #editUserForm, #userList {
+    background-color: #fff;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 10px auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    width: 300px;
+}
+
+input[type=text], input[type=number], button {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: #e4d7f5;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px; justify-content: space-between; /* Dodano za razporeditev elementov */
+    align-items: center; /* Dodano za vertikalno poravnavo */
+    flex-wrap: wrap; /* Dodano za obvladovanje prelivanja */
+}
+
+li strong {
+    margin-right: 5px; /* Dodan razmik za ločitev elementov */
+    font-weight: bold; /* Krepi tekst */
+}
+
+li button {
+    margin-left: 10px; /* Dodan razmik med gumbi */
+}
+
+/* Stil za tekst v vrstici, če želite */
+li span {
+    display: inline-block; /* Vsak kos podatka v svoji vrstici */
+    margin-right: 20px; /* Dodan razmik med podatki */
+}
+
+a {
+    color: #6a329f;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+/*za slike*/
+.header-images {
+    width: 100%;
+    position: relative; /* Omogoča absolutno pozicioniranje slik v tej div */
+    text-align: center; /* Centrira vsebino */
+    margin-bottom: 20px; /* Dodaja razmik od vsebine pod slikama */
+}
+
+.header-images img {
+    width: 100px; /* Nastavi širino slik */
+    height: auto; /* Ohrani razmerje slik */
+}
+
+.left-image {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.right-image {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+#voiceCommandButton {
+    background-color: #4CAF50; /* Zelena barva */
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+#voiceCommandButton:hover {
+    background-color: #45a049;
+}
+.video-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Prikaz treh videov v vrsti */
+    gap: 15px; /* Razmik med videi */
+    padding: 20px; /* Notranji odmik okoli videov */
+}
+
+.video-gallery iframe {
+    width: 100%; /* Širina videa se prilagodi celici v gridu */
+    border-radius: 8px; /* Zaobljeni robovi videa */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Senčenje za boljši 3D učinek */
+}
