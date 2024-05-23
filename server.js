@@ -3,9 +3,11 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
 const User = require('./models/userModel')
+const path = require('path');
 const app = express();
 const { auth } = require('express-openid-connect');
 const { requiresAuth } = require('express-openid-connect'); 
+
 const config = {
   authRequired: false,
   auth0Logout: true,

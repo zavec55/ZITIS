@@ -22,9 +22,9 @@ document.getElementById('userForm').addEventListener('submit', async (event) => 
         
         const data = await response.json();
         console.log('Uporabnik uspešno dodan:', data);
-        // Lahko dodate tukaj kodo za obvestilo o uspešnem dodajanju
+        // Add code here to display a success message or update the UI
     } catch (error) {
         console.error('Napaka pri dodajanju uporabnika:', error);
-        // Lahko dodate tukaj kodo za obvestilo o napaki
+        // Add code here to display an error message
     }
 });
