@@ -111,7 +111,7 @@ app.get('/User', requiresAuth(), async (req, res) => {
 // Zaščitena pot za prikaz uporabnikovega profila
 app.get('/test', requiresAuth(), (req, res) => {
     // req.oidc.user vsebuje podatke o trenutno prijavljenem uporabniku
-    res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(__dirname + '/public/home.html');
 });
 
 // Zaščitena pot za dostop do informacij o trenutno prijavljenem uporabniku

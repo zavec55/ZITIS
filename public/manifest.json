@@ -1,7 +1,7 @@
 {
     "short_name": "Joga Aplikacija",
-    "name": "Joga Aplikacija za upravljanje uporabnikov",
-    "start_url": "/index.html",
+    "name": "Joga Aplikacija - Najboljše mesto za vašo jogo",
+    "start_url": "/home.html",
     "display": "standalone",
     "theme_color": "#000000",
     "background_color": "#ffffff",
