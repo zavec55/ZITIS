@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YogaFlex</title>
-    <link rel="stylesheet" href="stil4.css">
+    <link rel="stylesheet" href="stil6.css">
 </head>
 <body>
     <header>
@@ -21,10 +21,10 @@
         </nav>
     </header>
 
-    <section id="news-section">
-        <h1>Novice</h1>
-        <div id="news-container"></div>
-        <p><a href="newsmanager.html">Upravljanje novic</a></p>
+    <section id="events-section">
+        <h1>Dogodki</h1>
+        <div id="events-container"></div>
+        <p><a href="newsmanager.html">Upravljanje dogodkov</a></p>
     </section>
 
     <footer>
@@ -33,38 +33,43 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            fetch('news.json')
+            fetch('http://localhost:3000/events/allevents')
                 .then(response => response.json())
                 .then(data => {
-                    const newsContainer = document.getElementById('news-container');
-                    data.forEach(article => {
-                        const articleDiv = document.createElement('div');
-                        articleDiv.classList.add('news-article');
+                    console.log('Events data:', data);
+                    const eventsContainer = document.getElementById('events-container');
+                    data.forEach(event => {
+                        const eventDiv = document.createElement('div');
+                        eventDiv.classList.add('events-article');
                         
                         const title = document.createElement('h2');
-                        title.textContent = article.title;
+                        title.textContent = event.name;
                         
                         const image = document.createElement('img');
-                        image.src = article.image;
-                        image.alt = article.title;
-                        image.classList.add('news-image');
+                        image.src = event.pictureUrl;
+                        image.alt = event.name;
+                        image.classList.add('events-image');
                         
                         const date = document.createElement('p');
-                        const formattedDate = formatDate(article.date);
-                        date.textContent = formattedDate;
+                        const formattedDate = formatDate(event.date);
+                        date.innerHTML = `<strong>When:</strong> ${formattedDate}`;
                         
-                        const content = document.createElement('p');
-                        content.textContent = article.content;
+                        const description = document.createElement('p');
+                        description.innerHTML = `<strong>Description:</strong> ${event.description}`;
+
+                        const location = document.createElement('p');
+                        location.innerHTML = `<strong>Location:</strong> ${event.location}`;
                         
-                        articleDiv.appendChild(title);
-                        articleDiv.appendChild(image);
-                        articleDiv.appendChild(date);
-                        articleDiv.appendChild(content);
+                        eventDiv.appendChild(title);
+                        eventDiv.appendChild(image);
+                        eventDiv.appendChild(date);
+                        eventDiv.appendChild(description);
+                        eventDiv.appendChild(location);
                         
-                        newsContainer.appendChild(articleDiv);
+                        eventsContainer.appendChild(eventDiv);
                     });
                 })
-                .catch(error => console.error('Error fetching news:', error));
+                .catch(error => console.error('Error fetching events:', error));
         });
 
         function formatDate(dateString) {

@@ -7,6 +7,7 @@ const path = require('path');
 const app = express();
 const { auth } = require('express-openid-connect');
 const { requiresAuth } = require('express-openid-connect'); 
+const eventRoutes = require('./routes/eventRouter'); 
 
 const config = {
   authRequired: false,
@@ -42,14 +43,16 @@ app.use(express.static('public'));
 app.use(express.json());
 //za pošiljanje podatkov preko obrazcev
 app.use(express.urlencoded({extended: false}))
-//routes
-app.get('/', (req, res) => {
-    res.send('zdravo');
-})
-
-
 // Podpora za parsanje JSON vsebine
 app.use(bodyParser.json());
+
+//routes
+app.use('/events', eventRoutes); 
+
+app.get('/', (req, res) => {
+    res.send('zdravo');
+});
+
 app.post('/syncData', async (req, res) => {
     const userData = req.body;
     console.log('Prejeli podatke za sinhronizacijo:', userData);
