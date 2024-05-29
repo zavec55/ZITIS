@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upravljanje novic - YogaFlex</title>
+    <link rel="stylesheet" href="stil5.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="home.html">Domov</a></li>
+                <li><a href="index.html">Dodaj uporabnika</a></li>
+                <li><a href="jogaslike.html ">Vaje preko kamere</a></li>
+                <li><a href="videi.html">Prikaz videov</a></li>
+                <li><a href="news.html">Novice</a></li>
+                <li><a href="http://localhost:3000/logout">Odjava</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="manage-news-section">
+        <h1>Upravljanje novic</h1>
+
+        <form id="news-form">
+            <input type="hidden" id="news-id">
+            <div>
+                <label for="news-title">Naslov:</label>
+                <input type="text" id="news-title" required>
+            </div>
+            <div>
+                <label for="news-content">Vsebina:</label>
+                <textarea id="news-content" required></textarea>
+            </div>
+            <div>
+                <label for="news-image">Slika (URL):</label>
+                <input type="text" id="news-image">
+            </div>
+            <button type="submit">Shrani Novico</button>
+        </form>
+
+        <table id="news-table">
+            <thead>
+                <tr>
+                    <th>Naslov</th>
+                    <th>Datum</th>
+                    <th>Vsebina</th>
+                    <th>Slika</th>
+                    <th>Akcije</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- News items will be dynamically added here -->
+            </tbody>
+        </table>
+        <p><a href="news.html">Nazaj</a></p>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 YogaFlex. Vse pravice pridržane.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const newsForm = document.getElementById('news-form');
+            const newsTableBody = document.getElementById('news-table').getElementsByTagName('tbody')[0];
+            let newsList = JSON.parse(localStorage.getItem('newsList')) || [];
+
+            function renderNews() {
+                newsTableBody.innerHTML = '';
+                newsList.forEach((news, index) => {
+                    const row = newsTableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${news.title}</td>
+                        <td>${formatDate(news.date)}</td>
+                        <td>${news.content}</td>
+                        <td><img src="${news.image}" alt="${news.title}" style="width: 50px; height: 50px;"></td>
+                        <td>
+                            <button onclick="editNews(${index})">Uredi</button>
+                            <button onclick="deleteNews(${index})">Izbriši</button>
+                        </td>
+                    `;
+                });
+            }
+
+            function formatDate(dateString) {
+                if (!dateString || isNaN(new Date(dateString))) {
+                    const today = new Date();
+                    const day = String(today.getDate()).padStart(2, '0');
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const year = String(today.getFullYear()).slice(-2);
+                    return `${day}/${month}/${year}`;
+                }
+                const date = new Date(dateString);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = String(date.getFullYear()).slice(-2);
+                return `${day}/${month}/${year}`;
+            }
+
+            function saveNews() {
+                const newsId = document.getElementById('news-id').value;
+                const newsTitle = document.getElementById('news-title').value;
+                const newsContent = document.getElementById('news-content').value;
+                const newsImage = document.getElementById('news-image').value;
+
+                if (newsId) {
+                    newsList[newsId] = {
+                        ...newsList[newsId],
+                        title: newsTitle,
+                        content: newsContent,
+                        image: newsImage,
+                    };
+                } else {
+                    let news = {
+                        title: newsTitle,
+                        content: newsContent,
+                        image: newsImage,
+                        date: new Date().toISOString()
+                    };
+                    newsList.push(news);
+                }
+
+                localStorage.setItem('newsList', JSON.stringify(newsList));
+                renderNews();
+                newsForm.reset();
+                document.getElementById('news-id').value = '';
+            }
+
+            window.editNews = function(index) {
+                const news = newsList[index];
+                document.getElementById('news-id').value = index;
+                document.getElementById('news-title').value = news.title;
+                document.getElementById('news-content').value = news.content;
+                document.getElementById('news-image').value = news.image;
+            }
+
+            window.deleteNews = function(index) {
+                newsList.splice(index, 1);
+                localStorage.setItem('newsList', JSON.stringify(newsList));
+                renderNews();
+                newsForm.reset();
+                document.getElementById('news-id').value = '';
+            }
+
+            newsForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveNews();
+            });
+
+            renderNews();
+        });
+    </script>
+</body>
+</html>
