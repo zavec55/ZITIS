@@ -131,6 +131,18 @@ header nav ul li a:hover {
     object-fit: cover;
 }
 
+.button {
+    background-color: #0660e6; /* Primarna barva gumba */
+    color: #fff; /* Barva besedila */
+    border: none; /* Odstranjena privzeta obroba */
+    padding: 10px 20px; /* Notranje odmik za večji gumb */
+    font-size: 16px; /* Velikost pisave */
+    border-radius: 5px; /* Zaobljeni robovi */
+    cursor: pointer; /* Kazalec ob premiku miške nad gumbom */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Prehodi za gladke spremembe */
+    margin: 10px; /* Zunanji odmik za razmik med gumbi */
+}
+
 footer {
     background: #333;
     color: #fff;

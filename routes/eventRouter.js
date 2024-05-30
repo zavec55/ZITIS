@@ -55,18 +55,17 @@ const Event = require('../models/event');
 
 // POST /event
 router.post('/', async (req, res) => {
-  console.log('post');
-  console.log('Request Body:', req.body); 
-  try {
-    //const event = await Event.create(req.body);
-    const event = await Event.findOneAndUpdate({ _id: req.body._id }, req.body, { new: true, upsert: true });
-    console.log('Created or Updated Event:', event);
-    res.status(201).json(event);
-  } catch (err) {
-    console.error('Error Creating Event:', err.message); // Log error message
-    res.status(400).json({ message: err.message });
-  }
-});
+    console.log('post');
+    console.log('Request Body:', req.body); // Log request body
+    try {
+      const event = await Event.create(req.body);
+      console.log('Created Event:', event); // Log created event
+      res.status(201).json(event);
+    } catch (err) {
+      console.error('Error Creating Event:', err.message); // Log error message
+      res.status(400).json({ message: err.message });
+    }
+  });
 
 
 /**
