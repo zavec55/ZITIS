@@ -6,16 +6,17 @@ const User = require('./models/userModel')
 const path = require('path');
 const app = express();
 const { auth } = require('express-openid-connect');
-const { requiresAuth } = require('express-openid-connect'); 
-const eventRoutes = require('./routes/eventRouter'); 
+const { requiresAuth } = require('express-openid-connect');
+const eventRoutes = require('./routes/eventRouter');
+const newsRoutes = require('./routes/newsRouter');
 
 const config = {
-  authRequired: false,
-  auth0Logout: true,
-  secret: 'a long, randomly-generated string stored in env',
-  baseURL: 'http://localhost:3000',
-  clientID: 'SRTeWbmhunh0xNhync1TmbDp7GrJwTgg',
-  issuerBaseURL: 'https://dev-drv6xgdq0ifuszzp.us.auth0.com'
+    authRequired: false,
+    auth0Logout: true,
+    secret: 'a long, randomly-generated string stored in env',
+    baseURL: 'http://localhost:3000',
+    clientID: 'SRTeWbmhunh0xNhync1TmbDp7GrJwTgg',
+    issuerBaseURL: 'https://dev-drv6xgdq0ifuszzp.us.auth0.com'
 };
 // za prikaz slik iz mape slike
 //app.use('/slike', express.static(path.join(__dirname, '/slike')));
@@ -27,27 +28,28 @@ app.use(auth(config));
 
 // req.isAuthenticated is provided from the auth router
 app.get('/', (req, res) => {
-//  res.send(req.oidc.isAuthenticated() ? 'Prijavljen' : 'Odjavljen');
-const isAuthenticated = req.oidc.isAuthenticated();
-  const linkText = isAuthenticated ? 'Odjava' : 'Prijava';
-  const linkUrl = isAuthenticated ? 'http://localhost:3000/logout' : 'http://localhost:3000/login';
-  const linkHTML = `<a href="${linkUrl}">${linkText}</a>`;
-  res.send(`${isAuthenticated ? 'Prijavljen' : 'Odjavljen'} | ${linkHTML}`);
+    //  res.send(req.oidc.isAuthenticated() ? 'Prijavljen' : 'Odjavljen');
+    const isAuthenticated = req.oidc.isAuthenticated();
+    const linkText = isAuthenticated ? 'Odjava' : 'Prijava';
+    const linkUrl = isAuthenticated ? 'http://localhost:3000/logout' : 'http://localhost:3000/login';
+    const linkHTML = `<a href="${linkUrl}">${linkText}</a>`;
+    res.send(`${isAuthenticated ? 'Prijavljen' : 'Odjavljen'} | ${linkHTML}`);
 });
 
 
-  
+
 // za statično vsebino (HTML, CSS, JavaScript)
 app.use(express.static('public'));
 //za json
 app.use(express.json());
 //za pošiljanje podatkov preko obrazcev
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({ extended: false }))
 // Podpora za parsanje JSON vsebine
 app.use(bodyParser.json());
 
 //routes
-app.use('/events', eventRoutes); 
+app.use('/events', eventRoutes);
+app.use('/news', newsRoutes);
 
 app.get('/', (req, res) => {
     res.send('zdravo');
@@ -92,7 +94,7 @@ app.post('/subscribe', (req, res) => {
     const subscription = req.body; // Naročniški podatki, ki jih pošlje spletna aplikacija
     console.log("Prejeta naročnina:", subscription);
 
-    res.status(200).json({message: 'Naročanje uspešno'});
+    res.status(200).json({ message: 'Naročanje uspešno' });
 });
 /////////////////////////////////
 
@@ -123,13 +125,13 @@ app.get('/currentUser', requiresAuth(), async (req, res) => {
         // Pridobitev ID uporabnika iz zahtevka
         const userId = req.oidc.user.sub;
 
-        
+
         // Prikaz ID uporabnika v HTML kodi (ali vračanje JSON objekta z več podatki, če je to potrebno)
         res.send(`<h1>ID uporabnika: ${userId}</h1>`);
         // Ali pa: res.status(200).json({ userId: userId, ... });
     } catch (error) {
         console.error('Napaka:', error);
-        res.status(500).json({message: 'Napaka pri pridobivanju podatkov o uporabniku'});
+        res.status(500).json({ message: 'Napaka pri pridobivanju podatkov o uporabniku' });
     }
 });
 
@@ -138,95 +140,88 @@ app.get('/User', (req, res) => {
     res.status(401).json({ message: 'Za dostop do te poti je potreben avtentikacijski žeton' });
 });
 
-  ///////////////////////////////
-app.get('/getUser', async(req, res) =>{
-    try{
+///////////////////////////////
+app.get('/getUser', async (req, res) => {
+    try {
         const users = await User.find({});
-       
+
         res.status(200).json(users);
-    }catch(error)
-    {
-        res.status(500).json({message: error.message})
+    } catch (error) {
+        res.status(500).json({ message: error.message })
     }
 })
 
-app.get('/getUser/:id', async(req, res) =>{
-    try{
-        const {id} = req.params;
+app.get('/getUser/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
         const user = await User.findById(id);
-       
+
         res.status(200).json(user);
-    }catch(error)
-    {
-        res.status(500).json({message: error.message})
+    } catch (error) {
+        res.status(500).json({ message: error.message })
     }
 })
 //za iskanje po imenu ali priimku
-app.get('/getUserImePriimek/:imepriimek', async(req, res) =>{
-    try{
-        const {imepriimek} = req.params;
+app.get('/getUserImePriimek/:imepriimek', async (req, res) => {
+    try {
+        const { imepriimek } = req.params;
         // Iskanje uporabnikov, katerih ime ali priimek ustreza podanemu nizu
         const users = await User.find({
-          $or: [
-            { ime: { $regex: imepriimek, $options: "i" } },
-            { priimek: { $regex: imepriimek, $options: "i" } }
-          ]
+            $or: [
+                { ime: { $regex: imepriimek, $options: "i" } },
+                { priimek: { $regex: imepriimek, $options: "i" } }
+            ]
         });
-       
+
         res.status(200).json(users);
-    }catch(error){
-        res.status(500).json({message: error.message});
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 });
 
-app.post('/User', async(req, res) => {
-    try{
+app.post('/User', async (req, res) => {
+    try {
         const user = await User.create(req.body);
         res.status(200).json(user);
-    }catch(error)
-    {
+    } catch (error) {
         console.log(error.message);
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 })
 
-app.delete('/deleteUser/:id', async(req, res) => {
-    try{
-        const {id} = req.params;
+app.delete('/deleteUser/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
         const user = await User.findByIdAndDelete(id);
-        if(!User)
-        {
-            return res.status(404).json({message:"ne najdem uporabnika"});
+        if (!User) {
+            return res.status(404).json({ message: "ne najdem uporabnika" });
         }
         res.status(200).json(user);
-    }catch{
-        res.status(500).json({message: error.message});
+    } catch {
+        res.status(500).json({ message: error.message });
     }
 })
-app.put('/urediUser/:id', async(req, res) =>
-{
-    try{
-        const {id} = req.params;
-        const  user = await User.findByIdAndUpdate(id, req.body);
-        if(!user)
-        {
-            return res.status(404).json({message:"ne najdem uporabnika"});
+app.put('/urediUser/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findByIdAndUpdate(id, req.body);
+        if (!user) {
+            return res.status(404).json({ message: "ne najdem uporabnika" });
         }
         res.status(200).json(user);
 
-    }catch(error)
-    {
-        res.status(500).json({message: error.message})
+    } catch (error) {
+        res.status(500).json({ message: error.message })
     }
 }
 )
 mongoose.connect('mongodb+srv://pts-user:zavec@cluster0.t8kwdtk.mongodb.net/Cluster')
-.then(() => {
-    console.log("povezan na bazo");
-    app.listen(3000, ()=> {
-        console.log('app je zagnan na portu 3000');
+    .then(() => {
+        console.log("povezan na bazo");
+        app.listen(3000, () => {
+            console.log('app je zagnan na portu 3000');
+        });
+    }).catch((error) => {
+        console.log(error);
     });
-}).catch((error) => {
-    console.log(error);
-});
 
