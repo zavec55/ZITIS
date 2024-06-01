@@ -24,9 +24,12 @@
     </header>
 
     <section id="news-section">
-        <h1>Dogodki</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Dogodki</h1>
+            <a href="#" id="filter-link">Filter: Ascending</a>
+        </div>
         <div id="news-container"></div>
-        <p><a href='newsmanager.html'>Upravljanje novic</p>
+        <p><a href='newsmanager.html'>Upravljanje novic</a></p>
     </section>
 
     <footer>
@@ -35,12 +38,31 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            let ascending = true;
+            const filterLink = document.getElementById('filter-link');
+
+            filterLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                ascending = !ascending;
+                filterLink.textContent = `Filter: ${ascending ? 'Ascending' : 'Descending'}`;
+                fetchAndDisplayNews(ascending);
+            });
+
+            fetchAndDisplayNews(ascending);
+        });
+
+        function fetchAndDisplayNews(ascending) {
             fetch('http://164.8.218.218:3000/news/allnews')
                 .then(response => response.json())
                 .then(data => {
-                    console.log('News data:', data);
                     const newsContainer = document.getElementById('news-container');
-                    data.forEach(news => {
+                    newsContainer.innerHTML = ''; // Clear existing news
+                    const sortedData = data.sort((a, b) => {
+                        const dateA = new Date(a.date);
+                        const dateB = new Date(b.date);
+                        return ascending ? dateA - dateB : dateB - dateA;
+                    });
+                    sortedData.forEach(news => {
                         const newsDiv = document.createElement('div');
                         newsDiv.classList.add('news-article');
 
@@ -57,7 +79,7 @@
                         date.innerHTML = `<strong>Datum:</strong> ${formattedDate}`;
 
                         const content = document.createElement('p');
-                        content.innerHTML = `<strong>Opis:</strong> ${news.content}`;
+                        content.innerHTML = `<strong>Vsebina:</strong> ${news.content}`;
 
                         newsDiv.appendChild(title);
                         newsDiv.appendChild(image);
@@ -68,7 +90,7 @@
                     });
                 })
                 .catch(error => console.error('Error fetching news:', error));
-        });
+        }
 
         function formatDate(dateString) {
             const date = new Date(dateString);

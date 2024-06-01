@@ -215,7 +215,7 @@ app.put('/urediUser/:id', async (req, res) => {
     }
 }
 )
-mongoose.connect('mongodb+srv://zbrdarovski:talamasca@newsappcluster.3nuxr5s.mongodb.net/News')
+mongoose.connect('mongodb+srv://pts-user:zavec@cluster0.t8kwdtk.mongodb.net/Cluster')
     .then(() => {
         console.log("povezan na bazo");
         app.listen(3000, () => {
