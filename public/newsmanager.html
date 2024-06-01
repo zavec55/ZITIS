@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upravljanje novic - YogaFlex</title>
     <link rel="stylesheet" href="stil5.css">
 </head>
+
 <body>
     <header>
         <nav>
             <ul>
                 <li><a href="home.html">Domov</a></li>
                 <li><a href="index.html">Dodaj uporabnika</a></li>
-                <li><a href="jogaslike.html ">Vaje preko kamere</a></li>
+                <li><a href="jogaslike.html">Vaje preko kamere</a></li>
                 <li><a href="videi.html">Prikaz videov</a></li>
                 <li><a href="news.html">Novice</a></li>
                 <li><a href="events.html">Dogodki</a></li>
@@ -62,13 +64,29 @@
         <p>&copy; 2024 YogaFlex. Vse pravice pridržane.</p>
     </footer>
 
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Izbriši novico</h2>
+            </div>
+            <div class="modal-body">
+                <p>Ali ste prepričani, da želite izbrisati to novico?</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()">Prekliči</button>
+                <button class="delete-button" id="confirm-delete-button">Izbriši</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const newsForm = document.getElementById('news-form');
             const newsTableBody = document.getElementById('news-table').getElementsByTagName('tbody')[0];
-            let newsList = JSON.parse(localStorage.getItem('newsList')) || [];
+            const newsForm = document.getElementById('news-form');
+            let newsList = [];
+            let newsToDeleteIndex = null;
 
-            function renderNews() {
+            function renderNews(newsList) {
                 newsTableBody.innerHTML = '';
                 newsList.forEach((news, index) => {
                     const row = newsTableBody.insertRow();
@@ -79,7 +97,7 @@
                         <td><img src="${news.image}" alt="${news.title}" style="width: 50px; height: 50px;"></td>
                         <td>
                             <button onclick="editNews(${index})">Uredi</button>
-                            <button onclick="deleteNews(${index})">Izbriši</button>
+                            <button onclick="confirmDeleteNews(${index})">Izbriši</button>
                         </td>
                     `;
                 });
@@ -100,6 +118,35 @@
                 return `${day}/${month}/${year}`;
             }
 
+            async function fetchNews() {
+                try {
+                    const response = await fetch('http://164.8.218.218:3000/news/allnews');
+                    newsList = await response.json();
+                    renderNews(newsList);
+                } catch (error) {
+                    console.error('Error fetching news:', error);
+                }
+            }
+
+            async function postNewNews(news) {
+                try {
+                    const response = await fetch('http://164.8.218.218:3000/news', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(news)
+                    });
+                    if (response.ok) {
+                        fetchNews();
+                    } else {
+                        console.error('Failed to post new news');
+                    }
+                } catch (error) {
+                    console.error('Error posting new news:', error);
+                }
+            }
+
             function saveNews() {
                 const newsId = document.getElementById('news-id').value;
                 const newsTitle = document.getElementById('news-title').value;
@@ -107,12 +154,13 @@
                 const newsImage = document.getElementById('news-image').value;
 
                 if (newsId) {
-                    newsList[newsId] = {
+                    const news = {
                         ...newsList[newsId],
                         title: newsTitle,
                         content: newsContent,
                         image: newsImage,
                     };
+                    postEditedNews(newsId, news);
                 } else {
                     let news = {
                         title: newsTitle,
@@ -121,15 +169,15 @@
                         date: new Date().toISOString()
                     };
                     newsList.push(news);
+                    postNewNews(news);
                 }
 
-                localStorage.setItem('newsList', JSON.stringify(newsList));
-                renderNews();
+                renderNews(newsList);
                 newsForm.reset();
                 document.getElementById('news-id').value = '';
             }
 
-            window.editNews = function(index) {
+            window.editNews = function (index) {
                 const news = newsList[index];
                 document.getElementById('news-id').value = index;
                 document.getElementById('news-title').value = news.title;
@@ -137,21 +185,71 @@
                 document.getElementById('news-image').value = news.image;
             }
 
-            window.deleteNews = function(index) {
-                newsList.splice(index, 1);
-                localStorage.setItem('newsList', JSON.stringify(newsList));
-                renderNews();
-                newsForm.reset();
-                document.getElementById('news-id').value = '';
+            async function postEditedNews(index, news) {
+                try {
+                    const response = await fetch(`http://164.8.218.218:3000/news/${news._id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(news)
+                    });
+                    if (response.ok) {
+                        fetchNews();
+                    } else {
+                        console.error('Failed to post edited news');
+                    }
+                } catch (error) {
+                    console.error('Error posting edited news:', error);
+                }
             }
 
-            newsForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                saveNews();
+            window.confirmDeleteNews = function (index) {
+                newsToDeleteIndex = index;
+                document.getElementById('delete-modal').style.display = 'block';
+            }
+
+            window.closeModal = function () {
+                document.getElementById('delete-modal').style.display = 'none';
+                newsToDeleteIndex = null;
+            }
+
+            async function deleteNews(index) {
+                const news = newsList[index];
+                try {
+                    const response = await fetch(`http://164.8.218.218:3000/news/${news._id}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        newsList.splice(index, 1);
+                        renderNews(newsList);
+                        newsForm.reset();
+                        document.getElementById('news-id').value = '';
+                    } else {
+                        console.error('Failed to delete news');
+                    }
+                } catch (error) {
+                    console.error('Error deleting news:', error);
+                }
+                closeModal();
+            }
+
+            document.getElementById('confirm-delete-button').addEventListener('click', () => {
+                if (newsToDeleteIndex !== null) {
+                    deleteNews(newsToDeleteIndex);
+                }
             });
 
-            renderNews();
+            if (newsForm) {
+                newsForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    saveNews();
+                });
+            }
+
+            fetchNews();
         });
     </script>
 </body>
+
 </html>
