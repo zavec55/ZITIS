@@ -28,16 +28,14 @@ app.use(auth(config));
 
 // req.isAuthenticated is provided from the auth router
 app.get('/', (req, res) => {
-    //  res.send(req.oidc.isAuthenticated() ? 'Prijavljen' : 'Odjavljen');
-    const isAuthenticated = req.oidc.isAuthenticated();
-    const linkText = isAuthenticated ? 'Odjava' : 'Prijava';
-    const linkUrl = isAuthenticated ? 'http://localhost:3000/logout' : 'http://localhost:3000/login';
-    const linkHTML = `<a href="${linkUrl}">${linkText}</a>`;
-    res.send(`${isAuthenticated ? 'Prijavljen' : 'Odjavljen'} | ${linkHTML}`);
+//  res.send(req.oidc.isAuthenticated() ? 'Prijavljen' : 'Odjavljen');
+const isAuthenticated = req.oidc.isAuthenticated();
+  const linkText = isAuthenticated ? 'Odjava' : 'Prijava';
+  const linkUrl = isAuthenticated ? 'http://localhost:3000/logout' : 'http://localhost:3000/test';
+  const linkHTML = `<a href="${linkUrl}">${linkText}</a>`;
+  res.send(`${isAuthenticated ? 'Prijavljen' : 'Odjavljen'} | ${linkHTML}`);
 });
-
-
-
+  
 // za statično vsebino (HTML, CSS, JavaScript)
 app.use(express.static('public'));
 //za json
@@ -215,13 +213,10 @@ app.put('/urediUser/:id', async (req, res) => {
     }
 }
 )
-mongoose.connect('mongodb+srv://pts-user:zavec@cluster0.t8kwdtk.mongodb.net/Cluster')
-    .then(() => {
-        console.log("povezan na bazo");
-        app.listen(3000, () => {
-            console.log('app je zagnan na portu 3000');
-        });
-    }).catch((error) => {
-        console.log(error);
+mongoose.connect('mongodb+srv://pts-user:pts-user@clusterpts.ihmpmb6.mongodb.net/YogaDB')
+.then(() => {
+    console.log("povezan na bazo");
+    app.listen(3000, ()=> {
+        console.log('app je zagnan na portu 3000');
     });
 

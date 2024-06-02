@@ -43,7 +43,7 @@
                 <label for="news-image">Slika (URL):</label>
                 <input type="text" id="news-image">
             </div>
-            <button type="submit">Shrani Novico</button>
+            <button type="submit">Dodaj novico</button>
         </form>
 
         <table id="news-table">
@@ -76,7 +76,7 @@
                 <p>Ali ste prepričani, da želite izbrisati to novico?</p>
             </div>
             <div class="modal-footer">
-                <button onclick="closeModal()">Prekliči</button>
+                <button class="button" onclick="closeModal()">Prekliči</button>
                 <button class="delete-button" id="confirm-delete-button">Izbriši</button>
             </div>
         </div>
@@ -113,8 +113,8 @@
                 <td>${news.content}</td>
                 <td><img src="${news.image}" alt="${news.title}" style="width: 50px; height: 50px;"></td>
                 <td>
-                    <button onclick="editNews('${news._id}')">Uredi</button>
-                    <button onclick="confirmDeleteNews('${news._id}')">Izbriši</button>
+                    <button class="button" onclick="editNews('${news._id}')">Uredi</button>
+                    <button class="button" onclick="confirmDeleteNews('${news._id}')">Izbriši</button>
                 </td>
             `;
                 });
@@ -137,7 +137,7 @@
 
             async function fetchNews() {
                 try {
-                    const response = await fetch('http://164.8.218.218:3000/news/allnews');
+                    const response = await fetch('http://localhost:3000/news/allnews');
                     newsList = await response.json();
                     renderNews(newsList);
                 } catch (error) {
@@ -147,7 +147,7 @@
 
             async function postNewNews(news) {
                 try {
-                    const response = await fetch('http://164.8.218.218:3000/news', {
+                    const response = await fetch('http://localhost:3000/news', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -218,7 +218,7 @@
                 }
 
                 try {
-                    const response = await fetch(`http://164.8.218.218:3000/news/${news._id}`, {
+                    const response = await fetch(`http://localhost:3000/news/${news._id}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -254,7 +254,7 @@
             async function deleteNews(index) {
                 const news = newsList[index];
                 try {
-                    const response = await fetch(`http://164.8.218.218:3000/news/${news._id}`, {
+                    const response = await fetch(`http://localhost:3000/news/${news._id}`, {
                         method: 'DELETE'
                     });
                     if (response.ok) {
