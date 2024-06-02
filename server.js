@@ -213,10 +213,71 @@ app.put('/urediUser/:id', async (req, res) => {
     }
 }
 )
-mongoose.connect('mongodb+srv://pts-user:pts-user@clusterpts.ihmpmb6.mongodb.net/YogaDB')
-.then(() => {
-    console.log("povezan na bazo");
-    app.listen(3000, ()=> {
-        console.log('app je zagnan na portu 3000');
-    });
 
+
+// Zaščitena pot za dostop do seznamov sob
+app.get('/rooms', requiresAuth(), async (req, res) => {
+    try {
+        const rooms = await Room.find({});
+        res.status(200).json(rooms);
+    } catch (error) {
+        console.error('Napaka:', error);
+        res.status(500).json({ message: 'Napaka pri pridobivanju seznamov sob' });
+    }
+});
+
+app.get('/rooms/:id', requiresAuth(), async (req, res) => {
+    try {
+        const room = await Room.findById(req.params.id);
+        if (!room) {
+            return res.status(404).json({message: "Ne najdem sobe"});
+        }
+        res.status(200).json(room);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.post('/rooms', requiresAuth(), async (req, res) => {
+    try {
+        const room = await Room.create(req.body);
+        res.status(201).json(room);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.delete('/rooms/:id', requiresAuth(), async (req, res) => {
+    try {
+        const room = await Room.findByIdAndDelete(req.params.id);
+        if (!room) {
+            return res.status(404).json({message: "Ne najdem sobe"});
+        }
+        res.status(200).json(room);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.put('/rooms/:id', requiresAuth(), async (req, res) => {
+    try {
+        const room = await Room.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!room) {
+            return res.status(404).json({message: "Ne najdem sobe"});
+        }
+        res.status(200).json(room);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+mongoose.connect('mongodb+srv://toni:toni123@cluster0.hny2wxj.mongodb.net/')
+.then(() => {
+    console.log("Povezan na bazo");
+    app.listen(3000, () => {
+        console.log('Aplikacija je zagnana na portu 3000');
+    });
+}).catch((error) => {
+    console.log(error);
+});
