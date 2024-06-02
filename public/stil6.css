@@ -63,6 +63,32 @@ header nav ul li a:hover {
     color: #333;
 }
 
+#filter-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
+#filter-container label {
+    margin-right: 1rem;
+    font-size: 1rem;
+    color: #333;
+}
+
+#filter {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    color: #333;
+    transition: border-color 0.3s ease;
+}
+
+#filter:hover {
+    border-color: #0660e6;
+}
+
 #events-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
