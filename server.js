@@ -272,7 +272,7 @@ app.put('/rooms/:id', requiresAuth(), async (req, res) => {
     }
 });
 
-mongoose.connect('mongodb+srv://toni:toni123@cluster0.hny2wxj.mongodb.net/')
+mongoose.connect('mongodb+srv://pts-user:zavec@cluster0.t8kwdtk.mongodb.net/testno')//mongodb+srv://toni:toni123@cluster0.hny2wxj.mongodb.net/')
 .then(() => {
     console.log("Povezan na bazo");
     app.listen(3000, () => {

@@ -157,7 +157,7 @@
 
         let currentPoseIndex = -1;
         let correctPosesCount = 0;
-        const poses = ["slike/jogapoze/poza1.jpg", "slike/jogapoze/poza2.jpg", "slike/jogapoze/poza3.jpg", "slike/jogapoze/poza2.jpg", "slike/jogapoze/poza3.jpg"];
+        const poses = ["slike/jogapoze/poza1.jpg", "slike/jogapoze/poza2.jpg", "slike/jogapoze/poza3.jpg", "slike/jogapoze/poza4.jpg", "slike/jogapoze/poza5.jpg"];
 
         function nextPose() {
             if (currentPoseIndex < poses.length - 1) {
@@ -183,7 +183,7 @@
             if (distance < threshold) {
                // console.log('Poza pravilna.');
                // alert('Poza je pravilna!');
-                speak('Poza je pravilna!');
+                speak('Pose is correct!');
                 correctPosesCount++;
                 if (correctPosesCount >= 5) {
                     speak('Čestitamo, uspešno ste opravili začetni tečaj izvedbe joge. To je bila zadnja poza.');
