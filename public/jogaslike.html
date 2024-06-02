@@ -71,46 +71,78 @@
 
         function speak(text) {
             const speech = new SpeechSynthesisUtterance(text);
-            speech.lang = 'sl-SI';
+            speech.lang = 'en-US';
             window.speechSynthesis.speak(speech);
         }
 
         if (annyang) {
             var commands = {
-                'foto': function() {
+                'photo': function() {
                     document.getElementById('snap').click();
-                    speak('slikam.');
+                    speak('taking photo.');
                 },
-                'preveri': function() {
-                    speak('preverjam pozo.');
+                'take photo': function() {
+                    document.getElementById('snap').click();
+                    speak('taking photo.');
+                },
+                'take image': function() {
+                    document.getElementById('snap').click();
+                    speak('taking photo.');
+                },
+                'image': function() {
+                    document.getElementById('snap').click();
+                    speak('taking photo.');
+                },
+                'check': function() {
+                    speak('Checking pose.');
                     takePicture();  // Neposredno kličemo funkcijo za slikanje
                 },
-                'prikaži uporabnike': function() {
+                'check pose': function() {
+                    speak('Checking pose.');
+                    takePicture();  // Neposredno kličemo funkcijo za slikanje
+                },
+                'show users': function() {
                     document.getElementById('viewUsersButton').click();
-                    speak('Prikazujem uporabnike.');
+                    speak('Showing users.');
+                },
+                'users': function() {
+                    document.getElementById('viewUsersButton').click();
+                    speak('Showing users.');
                 },
                 'info': function() {
-                    speak('Spletna stran prikazuje osnovne vaje za jogo in navodila kako se lotiti prvih vaj. Upamo da boste našli koristne informacije.');
+                    speak('THis website shows you the images of yoga poses you can practice.');
                 },
                 'video': function() {
                     window.location.href = '/videi.html';
-                    speak('prikazujem video.');
+                    speak('Showing video.');
                 },
-                'domov': function() {
+                'show video': function() {
+                    window.location.href = '/videi.html';
+                    speak('Showing video.');
+                },
+                'home': function() {
                     window.location.href = 'http://localhost:3000/test';
-                    speak('Odjavljam.');
+                    speak('Logging off.');
+                },
+                'log out': function() {
+                    window.location.href = 'http://localhost:3000/test';
+                    speak('Logging off.');
+                },
+                'logout': function() {
+                    window.location.href = 'http://localhost:3000/test';
+                    speak('Logging off.');
                 }
             };
             annyang.addCommands(commands);
-            annyang.setLanguage('sl');
+            annyang.setLanguage('en');
         }
 
         function startVoiceCommands() {
             if (annyang) {
                 annyang.start();
-                speak('Glasovni ukazi so aktivirani.');
+                speak('Voice commands are active.');
             } else {
-                alert('Glasovni ukazi niso podprti ali omogočeni v vašem brskalniku.');
+                alert('Voice commands are not supported by the browser.');
             }
         }
 

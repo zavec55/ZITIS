@@ -336,26 +336,38 @@ function displayUsers(users) {
 <script>
     function speak(text) {
     const speech = new SpeechSynthesisUtterance(text);
-    speech.lang = 'sl-SI'; // uporaba slovenščine
+    speech.lang = 'en-US'; // uporaba angleščine
     window.speechSynthesis.speak(speech);
 }
     if (annyang) {
         annyang.start();
         var commands = {
-            'foto': function() {
+            'photo': function() {
             document.getElementById('snap').click(); //aktiviramo gumb za slikanje
-            speak('slikam.');
-        },
-            'prikaži uporabnike': function() {
+            speak('taking a photo.');
+            },
+            'image': function() {
+            document.getElementById('snap').click(); //aktiviramo gumb za slikanje
+            speak('taking your image.');
+            },
+            'users': function() {
                 document.getElementById('viewUsersButton').click();
-                speak('Prikazujem uporabnike.');
+                speak('Showing users.');
+            },
+            'show users': function() {
+                document.getElementById('viewUsersButton').click();
+                speak('Showing users.');
             },
             'info': function() {
-                speak('Spletna stran prikazuje osnovne vaje za jogo in navodila kako se lotiti prvih vaj. Upamo da boste našli koristne informacije.');
+                speak('THis website shows you the basic info about yoga.');
             },
             'video': function() {
                 window.location.href = '/videi.html'; //povezava na videi.html vsebine
-                speak('prikazujem video.');
+                speak('Showing video.');
+            },
+            'show video': function() {
+                window.location.href = '/videi.html'; //povezava na videi.html vsebine
+                speak('Showing video.');
             },
             'odjava': function() {
                 window.location.href = 'http://localhost:3000/logout';
@@ -363,7 +375,7 @@ function displayUsers(users) {
             }
         };
         annyang.addCommands(commands);
-        annyang.setLanguage('sl');  // Nastavitev jezika na slovenščino
+        annyang.setLanguage('en');  // Nastavitev jezika na slovenščino
         annyang.start();
     }
 </script>
@@ -372,9 +384,9 @@ function displayUsers(users) {
     function startVoiceCommands() {
         if (annyang) {
             annyang.start();
-            speak('Glasovni ukazi so aktivirani.');
+            speak('Voice commands are active.');
         } else {
-            alert('Glasovni ukazi niso podprti ali omogočeni v vašem brskalniku.');
+            alert('Voice commands can not be used in this browser.');
         }
     }
     </script>
