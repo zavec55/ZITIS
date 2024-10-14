@@ -2,6 +2,24 @@
 
 ## Dokumentacija za vzpostavitev projekta
 
+### Opis aplikacije YogaFlex
+
+Namizna aplikacija za online vadbo joge omogoča uporabnikom vadbo iz udobja doma, z uporabo tehnologije sledenja gibanja, ki omogoča preverjanje pravilnosti izvedbe jogijskih poz. Aplikacija s kamero spremlja uporabnikove gibe in jih sproti usmerja z glasovnimi povratnimi informacijami, kar povečuje učinkovitost in samozavest pri vadbi. Inovativnost aplikacije izhaja iz kombinacije tehnologij, ki omogočajo personalizirano vadbo brez prisotnosti učitelja. Omogočen je dostop do vnaprej pripravljenih video vsebin. Omogoča dostop do novic in dogodkov. Aplikacija tako združuje udobje, tehnološko naprednost in dostopnost za širok spekter uporabnikov.
+### Funkcionalnosti aplikacije
+•	Prijava/odjavaa (express-openid-connect, google)
+•	dodajanje novic
+•	pregled novic
+•	urejanje novic
+•	odstranjevanje novic
+•	dodajanje dogodkov
+•	pregled dogodkov
+•	urejanje dogodkov
+•	brisanje dogodkov
+•	filtriranje dogodkov
+•	pregled joga vsebin in glasovna navigacija
+•	preverjanje joga poz s pomočjo glasovnih ukazov
+
+
 ### 1. Sistemske zahteve
 
 - **Operacijski sistem**: Windows
@@ -10,7 +28,6 @@
 - **Baza podatkov**: MongoDB (lokalno ali oddaljeno)
 - **Spletni brskalnik**: Google Chrome, Firefox ali drugi
 
-### 1.1 Koraki namestitve
 
 #### 1.2 Namestitev Node.js in Express:
 1. Obiščite [Node.js uradno spletno stran](https://nodejs.org/) in prenesite namestitveno datoteko za Windows.
